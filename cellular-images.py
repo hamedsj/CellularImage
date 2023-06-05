@@ -181,11 +181,11 @@ def main(args):
     input_image = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)
     if input_image.shape[0] >= input_image.shape[1]:
         input_image = cv2.resize(input_image,
-                                 (output_size, int(float(input_image.shape[1] * output_size) / input_image.shape[0])),
+                                 (int(float(input_image.shape[1] * output_size) / input_image.shape[0]), output_size),
                                  interpolation=cv2.INTER_AREA)
     else:
         input_image = cv2.resize(input_image,
-                                 (int(float(input_image.shape[0] * output_size) / input_image.shape[1]), output_size),
+                                 (output_size, int(float(input_image.shape[0] * output_size) / input_image.shape[1])),
                                  interpolation=cv2.INTER_AREA)
 
     for gray_pixel in input_image.flatten():
@@ -208,10 +208,10 @@ def main(args):
                     usage_dict[nearest_available_color] = new_usage
                     break
     result_image_rows = []
-    for row in tqdm(range(output_size), total=output_size):
+    for row in tqdm(range(int(input_image.shape[0])), total=int(input_image.shape[0])):
         row_list = []
-        for column in range(output_size):
-            cell_image = center_crop(cv2.imread(cells[row * output_size + column].local_path, cv2.IMREAD_GRAYSCALE))
+        for column in range(int(input_image.shape[1])):
+            cell_image = center_crop(cv2.imread(cells[row * input_image.shape[1] + column].local_path, cv2.IMREAD_GRAYSCALE))
             cell_image = cv2.resize(cell_image, (cell_image_size, cell_image_size), interpolation=cv2.INTER_AREA)
             row_list.append(cell_image)
         result_image_rows.append(cv2.hconcat(row_list))
