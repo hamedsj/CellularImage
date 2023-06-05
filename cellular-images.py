@@ -121,7 +121,7 @@ def cluster_images_based_on_color(sorted_images: list):
     return result
 
 
-def find_nearest_image(sorted_images: list, target: int):
+def find_nearest_image_loop_method(sorted_images: list, target: int):
     searching_set = list({img.dominant_gray_color for img in sorted_images})
     step = 0
     while step < max(target, 255 - target):
@@ -132,7 +132,9 @@ def find_nearest_image(sorted_images: list, target: int):
         step += 1
     return 0
 
-    ###
+
+def find_nearest_image_binary_search_method(sorted_images: list, target: int):
+    searching_set = list({img.dominant_gray_color for img in sorted_images})
     left = 0
     right = len(searching_set) - 1
     while left < right:
@@ -190,7 +192,7 @@ def main(args):
         if gray_pixel in color_to_images.keys():
             nearest_available_color = gray_pixel
         else:
-            nearest_available_color = find_nearest_image(sorted_images, gray_pixel)
+            nearest_available_color = find_nearest_image_loop_method(sorted_images, gray_pixel)
         images_of_nearest_color = color_to_images[nearest_available_color]
         usage_of_nearest_color = usage_dict[nearest_available_color]
         if len(usage_of_nearest_color) == len(images_of_nearest_color):
@@ -220,8 +222,10 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", help="input image path with jpg, jpeg or png format")
-    parser.add_argument("-o", "--output", default="./output.png", help="output path with png format, default=./output.png")
+    parser.add_argument("-o", "--output", default="./output.png",
+                        help="output path with png format, default=./output.png")
     parser.add_argument("-cs", "--cell_size", default=50, help="size of cell images in the output image, default=50")
-    parser.add_argument("-os", "--output_size", default=200, help="number of cell images used in every row of output image, default=200")
+    parser.add_argument("-os", "--output_size", default=200,
+                        help="number of cell images used in every row of output image, default=200")
 
     main(parser.parse_args())
