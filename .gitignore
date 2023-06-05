@@ -1,0 +1,7 @@
+/.idea/
+/unsplash-responses/
+/unsplash_images/
+.env
+*.jpg
+*.png
+*.jpeg
