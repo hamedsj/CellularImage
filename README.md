@@ -3,7 +3,7 @@
 Recreate an image with many other images as cells
 |         Input         |        output         |
 |-----------------------|-----------------------|
-| <img src="https://github.com/hamedsj/CellularImage/assets/17751865/0eaa0925-686a-41c2-97a1-466d7f596ffb" width="500" height="500" />  | <img src="demo-files/output-4-hr-200-demo.png" width="500" height="500" /> |
+| <img src="https://github.com/hamedsj/CellularImage/assets/17751865/0eaa0925-686a-41c2-97a1-466d7f596ffb" width="300" height="300" />  | <img src="demo-files/output-4-hr-200-demo.png" width="300" height="300" /> |
 
 
 ### Built With
