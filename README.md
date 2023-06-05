@@ -13,7 +13,7 @@ Recreate an image with many other images as cells
 
 ### Prerequisites
 
-All the modules you need for running the project are listed in the `requirements.txt` you can install the easily using this command:
+All the modules you need for running the project are listed in the `requirements.txt` you can install them easily using this command:
 
 ```bash
 pip install -r requirements.txt
