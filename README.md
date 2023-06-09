@@ -20,8 +20,8 @@ pip install -r requirements.txt
   ```
 
 ## Usage
-
-You can simply run the application using command below:
+1. Put your [Unsplash API ACCESS_TOKEN](https://unsplash.com/oauth/applications) in te sample.env file
+2. You can simply run the application using command below:
 ```bash
 python3 cellular-images.py -i YOUR_IMAGE_PATH
 ```
