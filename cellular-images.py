@@ -1,11 +1,12 @@
-from tqdm import tqdm
-import requests
-import os
-import json
-import numpy as np
-import cv2
-from dotenv import load_dotenv
 import argparse
+import json
+import os
+
+import cv2
+import numpy as np
+import requests
+from dotenv import load_dotenv
+from tqdm import tqdm
 
 # import cv2.cv2 as cv2
 
@@ -30,9 +31,13 @@ class UnsplashImage:
 
 
 def fetch_page_of_images(page: int = 1, per_page: int = 100):
-    response_cache_file_name = f"./unsplash-responses/response-cache-{page}-{per_page}.json"
+    response_cache_directory = "./unsplash-responses"
+    response_cache_file_name = f"{response_cache_directory}/response-cache-{page}-{per_page}.json"
     response_string = ""
     try:
+        if not os.path.exists(response_cache_directory):
+            os.makedirs(response_cache_directory)  # Create the directory if it doesn't exist
+
         if not os.path.exists(response_cache_file_name):
             print("calling unsplash api --> start")
             response = requests.get(url="https://api.unsplash.com/photos",
@@ -69,6 +74,10 @@ def fetch_images():
 def load_image(image: UnsplashImage):
     image_path = f"./unsplash_images/{image.image_id}.jpg"
     try:
+        directory = os.path.dirname(image_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
         if os.path.exists(image_path):
             image.local_path = image_path
             return True
@@ -78,6 +87,7 @@ def load_image(image: UnsplashImage):
             output_image.write(response.content)
         image.local_path = image_path
         return True
+
     except:
         return False
 
@@ -170,14 +180,13 @@ def main(args):
         if loaded_successfully:
             image.dominant_gray_color = find_dominant_color_resize(image.local_path)
         else:
-            print(f"failure --> {image.id}")
+            print(f"failure --> {image.image_id}")
 
     sorted_images = sorted(images, key=lambda item: item.dominant_gray_color)
     color_to_images = cluster_images_based_on_color(sorted_images)
     usage_dict = {}
     for image in sorted_images:
         usage_dict[image.dominant_gray_color] = []
-    cells = []
     input_image = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)
     if input_image.shape[0] >= input_image.shape[1]:
         input_image = cv2.resize(input_image,
@@ -188,6 +197,7 @@ def main(args):
                                  (output_size, int(float(input_image.shape[0] * output_size) / input_image.shape[1])),
                                  interpolation=cv2.INTER_AREA)
 
+    cells = []
     for gray_pixel in input_image.flatten():
         if gray_pixel in color_to_images.keys():
             nearest_available_color = gray_pixel
@@ -211,7 +221,8 @@ def main(args):
     for row in tqdm(range(int(input_image.shape[0])), total=int(input_image.shape[0])):
         row_list = []
         for column in range(int(input_image.shape[1])):
-            cell_image = center_crop(cv2.imread(cells[row * input_image.shape[1] + column].local_path, cv2.IMREAD_GRAYSCALE))
+            cell_image = center_crop(
+                cv2.imread(cells[row * input_image.shape[1] + column].local_path, cv2.IMREAD_GRAYSCALE))
             cell_image = cv2.resize(cell_image, (cell_image_size, cell_image_size), interpolation=cv2.INTER_AREA)
             row_list.append(cell_image)
         result_image_rows.append(cv2.hconcat(row_list))
